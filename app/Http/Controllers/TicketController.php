@@ -12,10 +12,23 @@ class TicketController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+  public function index(Request $request)
     {
-        $tickets = Ticket::paginate(5);
-    
+        // Mengambil query pencarian
+        $search = $request->input('search');
+
+        // Query dasar untuk mengambil tiket
+        $query = Ticket::query();
+
+        // Jika ada query pencarian, tambahkan kondisi untuk pencarian
+        if ($search) {
+            $query->where('nama_wisata', 'LIKE', "%{$search}%")
+                  ->orWhere('harga_ticket', 'LIKE', "%{$search}%");
+        }
+
+        // Ambil data dengan pagination
+        $tickets = $query->paginate(5);
+
         // Mengembalikan tampilan 'ticket.index' kepada pengguna,
         // dan menyertakan data tiket dalam bentuk variabel $tickets
         return view('ticket.index', compact('tickets'));

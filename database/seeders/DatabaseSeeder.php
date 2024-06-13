@@ -13,6 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(MahasiswasTableSeeder::class);
+        $this->call(AuthSeeder::class);
+
+        // $this->call(MahasiswasTableSeeder::class);
     }
 }
+
+
+// php artisan db:seed untuk mengirim data ke database
