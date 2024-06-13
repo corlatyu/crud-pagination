@@ -5,14 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
 
+use function Laravel\Prompts\search;
+
 class MahasiswaController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $mahasiswas = Mahasiswa::paginate(5); // Menampilkan 5 mahasiswa per halaman
+        $search = $request->input('search');
+
+        $query = Mahasiswa::query();
+
+        if ($search) {
+            $query->where('nama', 'LIKE', "%{$search}%") 
+                     ->orwhere('nbi', 'LIKE', "%{$search}%");
+        }
+
+        $mahasiswas = $query->paginate(5); // Menampilkan 5 mahasiswa per halaman
         return view('dashboard.index', compact('mahasiswas'));
         
     }
@@ -44,6 +55,16 @@ class MahasiswaController extends Controller
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('mahasiswa.index')->with('success', 'Mahasiswa created successfully.');
     }
+
+    public function show(string $id)
+    {
+        // Mengambil tiket dari database berdasarkan ID yang diberikan
+        $mahasiswas = Mahasiswa::find($id);
+    
+        // Mengembalikan view 'ticket.show' dan menyertakan data tiket ke dalamnya
+        return view('dashboard.show', compact('mahasiswas'));
+    }
+    
 
     /**
      * Show the form for editing the specified resource.
